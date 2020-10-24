@@ -1,6 +1,6 @@
  version: 2
 
- workflows: # Define a Workflow running the build job, then the deploy job
+ workflows: 
    version: 2
    build-deploy:
      jobs:
@@ -10,13 +10,25 @@
              - build
            filters:
              branches:
-               only: master # Only deploys when the commit is on the Master branch
+               only: master 
  jobs:
    build:
-     docker: # Specify executor for running build job - this example uses a Docker container
+     docker: 
+       - image: ubuntu 
+         auth:
+           username: mydockerhub-user
+           password: $DOCKERHUB_PASSWORD 
+ ... 
+deploy:
+     docker: # Specify executor for running deploy job
        - image: ubuntu # Specify docker image to use
          auth:
            username: mydockerhub-user
            password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-   ... # build job steps omitted for brevity
-     
+     steps:
+       - run: # Install the AWS CLI if it is not already included in the docker image
+           name: Install awscli 
+           command: sudo pip install awscli
+       - run: # Deploy to S3 using the sync command
+           name: Deploy to S3
+           command: aws s3 sync <path/to/bucket> <s3://location/in/S3-to-deploy-to>
