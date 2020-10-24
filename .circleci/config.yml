@@ -17,8 +17,8 @@
        - image: ubuntu 
          auth:
            username: mydockerhub-user
-           password: $DOCKERHUB_PASSWORD 
-   ... 
+           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+   ... # build job steps omitted for brevity
    deploy:
      docker: # Specify executor for running deploy job
        - image: ubuntu # Specify docker image to use
