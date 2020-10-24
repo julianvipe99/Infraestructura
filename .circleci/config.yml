@@ -11,3 +11,12 @@
            filters:
              branches:
                only: master # Only deploys when the commit is on the Master branch
+ jobs:
+   build:
+     docker: # Specify executor for running build job - this example uses a Docker container
+       - image: ubuntu # Specify docker image to use
+         auth:
+           username: mydockerhub-user
+           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+   ... # build job steps omitted for brevity
+     
