@@ -19,7 +19,7 @@
            username: mydockerhub-user
            password: $DOCKERHUB_PASSWORD 
  ... 
-deploy:
+ deploy:
      docker: # Specify executor for running deploy job
        - image: ubuntu # Specify docker image to use
          auth:
