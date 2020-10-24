@@ -1,34 +1,24 @@
- version: 2
-
- workflows: 
-   version: 2
-   build-deploy:
-     jobs:
-       - build
-       - deploy:
-           requires:
-             - build
-           filters:
-             branches:
-               only: master 
- jobs:
-   build:
-     docker: 
-       - image: ubuntu 
-         auth:
-           username: mydockerhub-user
-           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-   ... # build job steps omitted for brevity
-   deploy:
-     docker: # Specify executor for running deploy job
-       - image: ubuntu # Specify docker image to use
-         auth:
-           username: mydockerhub-user
-           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-     steps:
-       - run: # Install the AWS CLI if it is not already included in the docker image
-           name: Install awscli 
-           command: sudo pip install awscli
-       - run: # Deploy to S3 using the sync command
-           name: Deploy to S3
-           command: aws s3 sync <path/to/bucket> <s3://location/in/S3-to-deploy-to>
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "9e:21:30:79:40:47:09:75:61:53:d7:83:ff:d9:8c:0c"
+      - run:
+          name: Deploy
+          command: |
+            # 6- Give the ingress rule some time to propogate
+            sleep 5
+            # 7- SSH to the server to deploy
+            # TODO Change to your username
+            EC2_USERNAME=ubuntu
+            # TODO Change to your server's URL or public IP
+            EC2_PUBLIC_DNS=ec2-100-24-206-98.compute-1.amazonaws.com
+            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_DNS 'sudo apt update && sudo apt install apache2 -y'
+            # TODO Perform steps to deploy
+            # .
+            # .
