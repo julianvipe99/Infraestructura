@@ -1,11 +1,34 @@
 version: 2.1
-jobs:
-  build:
-    docker: 
-      - image: cimg/node:14.10.1 # the primary container, where your job's commands are run
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+orbs:
+  azure-cli: circleci/azure-cli@1.1.0jobs:
+  verify-install:
+    executor: azure-cli/default
     steps:
-      - checkout # check out the code in the project directory
-      - run: echo "hello world" # run the `echo` command
+      - azure-cli/install
+      - run:
+          command: az -v
+          name: Verify Azure CLI is installed
+orbs:
+  azure-cli: circleci/azure-cli@1.0.0
+version: 2.1
+workflows:
+  example-workflow:
+    jobs:
+      - verify-install
+jobs:
+  login-to-azure:
+    executor: azure-cli/default
+    steps:
+      - azure-cli/install
+      - azure-cli/login-with-user:
+          alternate-tenant: true
+      - run:
+          command: az resource list
+          name: List resources of tenant stored as `AZURE_TENANT` env var
+orbs:
+  azure-cli: circleci/azure-cli@1.0.0
+version: 2.1
+workflows:
+  example-workflow:
+    jobs:
+      - login-to-azure   
