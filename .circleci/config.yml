@@ -22,22 +22,4 @@ jobs:
             # TODO Perform steps to deploy
             # .
             # .
-  deploy:
-    docker:
-      - image: circleci/openjdk:8-jdk
-    steps:
-      - run:
-          name: AWS EC2 deploy
-          command: |
-            sleep 5
-            EC2_USERNAME=ubuntu
-            EC2_PUBLIC_DNS=ec2-54-234-132-114.compute-1.amazonaws.com
-            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_DNS 'echo Start deploy && sudo git pull && sudo cp index.html /var/www/html/ && sudo service apache2 restart && echo Deploy end'
-workflows:
-  version: 2.1
-  build-and-deploy:
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build            
+  
